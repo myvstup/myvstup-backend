@@ -11,33 +11,33 @@ class Session:
         return result.inserted_id
 
 
-class RelevantSpecialization():
+#class RelevantSpecialization():
 
-    def get_point(self):
+#    def get_point(self):
 
-        unfetched = db().user_points.find( self.id_query )
-        return [i for i in unfetched]
+#        unfetched = db().user_points.find( self.id_query )
+#        return [i for i in unfetched]
 
-    def __init__(self,data):
+#    def __init__(self,data):
 
-        self.id_query = {'_id':data['userId']}
+#        self.id_query = {'_id':data['userId']}
 
-        print (self.id_query)
+#        print (self.id_query)
 
-        self.query = {}
-        needed_fields = list(data.keys())
-        needed_fields.remove('userId')
-        for prop in needed_fields:
-            if data[prop]!='all' : self.query.update({ prop : data[prop] })
+#        self.query = {}
+#        needed_fields = list(data.keys())
+#        needed_fields.remove('userId')
+#        for prop in needed_fields:
+#            if data[prop]!='all' : self.query.update({ prop : data[prop] })
 
-        self.query.update( {'zno_coef.needed_zno' : { '$all' : list( get_point()[0]['zno'].key() ) } } )
+#        self.query.update( {'zno_coef.needed_zno' : { '$all' : list( get_point()[0]['zno'].key() ) } } )
 
-        print (self.query)
+#        print (self.query)
 
-    def get_spec(self):
+#    def get_spec(self):
         
-        unfetched = db().info.find( self.query )
-        return [i for i in unfetched]
+#        unfetched = db().info.find( self.query )
+#        return [i for i in unfetched]
 
 
 # decide who will count ranges 

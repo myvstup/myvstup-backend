@@ -14,16 +14,16 @@ def add_request():
     return jsonify({'userId': str(answer)}),201
 
 
-@app.route('/api/v0/get_proba', methods=['GET'])
-def proba_spec():
+#@app.route('/api/v0/get_proba', methods=['GET'])
+#def proba_spec():
 
-    if type(request.json)!=dict:
-        abort(400)
+#    if type(request.json)!=dict:
+#        abort(400)
 
-    response = models.RelevantSpecialization(request.json)
+#    response = models.RelevantSpecialization(request.json)
 
-    return jsonify(response)
+#    return jsonify(response)
 
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+#@app.errorhandler(404)
+#def not_found(error):
+#    return make_response(jsonify({'error': 'Not found'}), 404)
