@@ -7,21 +7,12 @@ import json
 
 @app.route('/api/v0/points', methods=['POST','GET'])
 def add_request():
-    encoding = request.data.decode('utf8')
-    if len(encoding)!=0:
-        data = {'userId': str(models.Session.add_points(json.loads(encoding)))}
-    else :
-        data = {"Error":"Wrong data"}
 
-    resp = jsonify(data)
-    resp.status = 'OK'
-    resp.status_code = 200
-    resp.content_type = 'application/json;charset=utf-8'
-    resp.headers = {'Content-Type' : 'application/json;charset=utf-8',
-                    'Access-Control-Allow-Credentials' : 'true',
-                    'Access-Control-Allow-Origin'    : '*'}
-
-    return resp
+    if request.method == 'GET':
+        return {'status':'get_succesed'}
+    if request.method == 'POST':
+        data = {'userId': str(models.Session.add_points(request.data))}
+        return data
 
 @app.route('/api/v0/get_proba', methods=['GET'])
 def proba_spec():

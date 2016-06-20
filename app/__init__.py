@@ -1,8 +1,10 @@
-from flask import Flask
+from flask.ext.api import FlaskAPI
+from flask_cors import CORS
 from pymongo import MongoClient
 import os
 
-app = Flask(__name__)
+app = FlaskAPI(__name__)
+CORS(app)
 
 db = MongoClient(os.environ.get('MONGODB_URI')).heroku_rcbs36lq
 
