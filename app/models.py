@@ -12,7 +12,7 @@ class Session:
         return result.inserted_id
 
 
-class RelevantSpecialization:
+class RelevantSpecialization():
 
     def get_point(self):
 
