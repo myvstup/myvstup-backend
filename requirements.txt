@@ -9,3 +9,4 @@ WTForms==2.1
 Flask-API==0.6.6
 markdown==2.6.6
 flask_cors==2.1.2
+bson==1.1.0

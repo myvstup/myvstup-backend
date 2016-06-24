@@ -12,13 +12,13 @@ def add_request():
         return {'status':'get_ok'}
 
     if request.method == 'POST':
-        data = {'userId': str(models.Session.add_points(request.data))}
+        data = {'userId': str(models.Session.add_points(request.data))	}
         return data, 201
 
-@app.route('/api/v0/get_proba', methods=['GET'])
+@app.route('/api/v0/get_proba', methods=['POST'])
 def proba_spec():
 
-    response = models.RelevantSpecialization.count_proba(request.data)
+    response = models.RelevantSpecialization(request.data).count_proba()
 
     return response, 200
 
