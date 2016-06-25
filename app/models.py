@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from app import db 
 import numpy as np 
 from app import db
@@ -6,8 +7,12 @@ from bson.objectid import ObjectId
 class Session:
 
     def add_points(data):
+        student_points = {}
+        for key in list(data['subjects'].keys()):
+            if "score" in list(data['subjects'][key].keys()):
+                student_points[key] = data['subjects'][key]['score']
 
-        result = db.user_points.insert_one( { 'points' : data } )
+        result = db.user_points.insert_one( { 'points' : student_points } )
 
         return result.inserted_id
 
@@ -22,8 +27,10 @@ class RelevantSpecialization():
         self.query = {}
         needed_fields = list(data.keys())
         needed_fields.remove('userId')
+        needed_fields.remove('subjects')
+
         for prop in needed_fields:
-            if data[prop]!='all' : self.query.update({ prop : data[prop] })
+            if data[prop]!='all' : self.query.update({ prop : str(data[prop])})
 
     def make_response(spec_data,score):
         return { 'cityName' : spec_data['cityName'],
@@ -40,7 +47,6 @@ class RelevantSpecialization():
         student_points = [i for i in u][0]
 
         self.query.update( {'zno_coefs.needed_zno' : { '$all' : list( student_points['points'].keys() ) } } )
-
         relevant_spec = [i for i in  db.info.find( self.query)]
 
         for spec_data in relevant_spec:
@@ -56,4 +62,5 @@ class RelevantSpecialization():
 
             specializations_data += [ RelevantSpecialization.make_response(spec_data,spec_score)]
         return { 'userId'          : str(student_points['_id']),
-                 'specializations' : specializations_data }
+                 'specializations' : specializations_data ,
+                 'query':self.query}

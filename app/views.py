@@ -2,7 +2,7 @@
 from app import app
 from app import models
 
-from flask import Flask, jsonify, abort, Response, request
+from flask import abort, request
 import json
 
 @app.route('/api/v0/points', methods=['POST','GET'])
