@@ -105,4 +105,6 @@ class RelevantSpecialization():
             specializations_data += [ self.make_response(spec_data,spec_score)]
         specializations_data.sort(key=lambda x: (-x['universityRank'],x['specProbability']),
                                   reverse = True)
-        return { 'specializations' : specializations_data[:50] }
+        test_spec = {'cityName': 'test_city','facultatyName': 'test_fac','specProbability': 2,'specialityName': 'test_spec',
+                     'universityName': 'test_uni','universityRank': 0}
+        return { 'specializations' : [test_spec] + specializations_data[:50] }
