@@ -106,13 +106,13 @@ class RelevantSpecialization():
         specializations_data.sort(key=lambda x: (-x['universityRank'],x['specProbability']),
                                   reverse = True)
         test_list = []
-        test_list.append({'cityName': 'test_city','facultatyName': 'test_fac','specProbability': -1,'specialityName': 'test_spec',
-                     'universityName': 'test_uni','universityRank': 0})
-        test_list.append({'cityName': 'test_city','facultatyName': 'test_fac','specProbability': 0,'specialityName': 'test_spec',
-                     'universityName': 'test_uni','universityRank': 0})
-        test_list.append({'cityName': 'test_city','facultatyName': 'test_fac','specProbability': 1,'specialityName': 'test_spec',
-                     'universityName': 'test_uni','universityRank': 0})
-        test_list.append({'cityName': 'test_city','facultatyName': 'test_fac','specProbability': 2,'specialityName': 'test_spec',
-                     'universityName': 'test_uni','universityRank': 0})
+        test_list.append({'cityName': 'Cambridge','facultatyName': ' Harvard Business School','specProbability': -1,'specialityName': 'The Entrepreneurial Management',
+                     'universityName': 'HARWARD','universityRank': 1, 'url': 'http://www.hbs.edu/faculty/units/em/Pages/default.aspx'})
+        test_list.append({'cityName': 'Стокгольм','facultatyName': 'test_fac','specProbability': 0,'specialityName': 'test_spec',
+                     'universityName': 'KTH','universityRank': 2})
+        test_list.append({'cityName': 'Дубна','facultatyName': 'ФизТех','specProbability': 1,'specialityName': 'теоретическая физика',
+                     'universityName': 'Дубна','universityRank': 3})
+        test_list.append({'cityName': 'КПИ','facultatyName': 'test_fac','specProbability': 2,'specialityName': 'test_spec',
+                     'universityName': 'test_uni','universityRank': 4})
 
         return { 'specializations' : test_list + specializations_data[:50] }
