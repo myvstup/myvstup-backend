@@ -24,9 +24,11 @@ class RelevantSpecialization():
         self.certificateScore = data['certificateScore']
         self.student_points = Tools.get_student_points(data)
         self.uni_rank = json.load(open('app/uni_rank.json','r',encoding = 'utf-8-sig'))
+        self.hasTrainingPoints = data['hasTrainingPoints']
+        self.hasOlimpicPoints = data['hasOlimpicPoints']
 
         for prop in list(data.keys()):
-            if data[prop]!='all' and prop not in ['userId','subjects','certificateScore']: 
+            if data[prop]!='Україна' and prop not in ['userId','subjects','certificateScore','hasTrainingPoints','hasOlimpicPoints']: 
                 self.dropdowns.update({ prop : str(data[prop])})
                 
     def query_data(self):
@@ -60,10 +62,12 @@ class RelevantSpecialization():
                                 }
               },
               {"$match" : 
-                     {'possible_combinations' : {'$not' : {'$size' : 0 }},
-                      'possible_combinations.0' : {'$not' : {'$size' : 0 }},
-
-                      }}
+                     {'possible_combinations' : 
+                                {'$not' : 
+                                    {'$size' : 0 }
+                                }
+                      },
+               }
             ]
         q[1]['$match'].update(self.dropdowns)
 #        self.query = {'isFreePlaces':True}
@@ -94,8 +98,9 @@ class RelevantSpecialization():
                     sum_points += spec_data['zno_coefs'][zno_name]
                 except KeyError :pass
             student_score += self.certificateScore*(1 - sum_points)
+            student_score += self.hasTrainingPoints * 10 + self.hasOlimpicPoints * 10
             # validating calculation
-            if student_score > 200 and student_score < 100:
+            if student_score > 220 and student_score < 100:
                 return { 'wrong_calculation': student_score,
                          'query'            : self.query }
             # checking what prob he belongs
