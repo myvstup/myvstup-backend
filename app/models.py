@@ -56,6 +56,7 @@ class RelevantSpecialization():
                         "point_mid_median":1,
                         "point_median"   : 1,
                         "zno_coefs"      : 1,
+                        "link"           : 1
                                 }
               },
               {"$match" : 
@@ -75,6 +76,7 @@ class RelevantSpecialization():
                  'universityName'  : spec_data['universityName'],
                  'facultatyName'   : spec_data['facultatyName'],
                  'specialityName'  : spec_data['specialityName'],
+                 'url'             : spec_data['link'],
                  'specProbability' : score,
                  'universityRank'  : int(rank)}
 
