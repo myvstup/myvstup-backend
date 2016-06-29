@@ -24,8 +24,12 @@ class RelevantSpecialization():
         self.certificateScore = data['certificateScore']
         self.student_points = Tools.get_student_points(data)
         self.uni_rank = json.load(open('app/uni_rank.json','r',encoding = 'utf-8-sig'))
-        self.hasTrainingPoints = data['hasTrainingPoints']
-        self.hasOlimpicPoints = data['hasOlimpicPoints']
+        try:
+            self.hasTrainingPoints = data['hasTrainingPoints']
+            self.hasOlimpicPoints = data['hasOlimpicPoints']
+        except KeyError:
+            self.hasTrainingPoints = 0
+            self.hasOlimpicPoints = 0
 
         for prop in list(data.keys()):
             if data[prop]!='Україна' and prop not in ['userId','subjects','certificateScore','hasTrainingPoints','hasOlimpicPoints']: 
