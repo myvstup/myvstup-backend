@@ -22,6 +22,13 @@ def proba_spec():
 
     return response, 200
 
+@app.route('/api/v0/auto_complete_data', methods=['GET'])
+def auto_complete_data():
+
+    response = models.AutoCompleteData.get_file()
+
+    return response, 200
+
 @app.errorhandler(404)
 def not_found(error):
     return {'Attention':'The world is mine!'}

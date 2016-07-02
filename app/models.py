@@ -77,7 +77,7 @@ class RelevantSpecialization():
 #        self.query = {'isFreePlaces':True}
         return [i for i in db.info.aggregate(q)]
 
-    def make_response(self,spec_data,score):
+    def make_response(self,spec_data,score,student_score):
         try : rank = self.uni_rank[spec_data['universityName']]
         except KeyError : rank = 101
         return { 'cityName'        : spec_data['cityName'],
@@ -86,7 +86,23 @@ class RelevantSpecialization():
                  'specialityName'  : spec_data['specialityName'],
                  'url'             : spec_data['link'],
                  'specProbability' : score,
-                 'universityRank'  : int(rank)}
+                 'universityRank'  : int(rank),
+                 'test'            : self.test_counting(student_score,spec_data)}
+
+    def test_counting(self,student_score,spec_data):
+        student_score = 0; sum_points = 0;used_zno_coefs = {}
+        for zno_name in list(self.student_points['points'].keys()):
+            try: 
+                student_score += spec_data['zno_coefs'][zno_name] * self.student_points['points'][zno_name]
+                sum_points += spec_data['zno_coefs'][zno_name]
+                used_zno_coefs.update({zno_name:spec_data['zno_coefs'][zno_name]})
+            except KeyError :pass
+        student_score += self.certificateScore*(1 - sum_points)
+        student_score += self.hasTrainingPoints * 10 + self.hasOlimpicPoints * 10
+
+        return {'student_score'  : student_score,
+                'used_zno'       : self.student_points['points'],
+                'used_zno_coefs' : used_zno_coefs }
 
     def count_proba(self):
 
@@ -103,6 +119,8 @@ class RelevantSpecialization():
                 except KeyError :pass
             student_score += self.certificateScore*(1 - sum_points)
             student_score += self.hasTrainingPoints * 10 + self.hasOlimpicPoints * 10
+
+
             # validating calculation
             if student_score > 220 and student_score < 100:
                 return { 'wrong_calculation': student_score,
@@ -113,7 +131,7 @@ class RelevantSpecialization():
                 if student_score >= spec_data[points_range] :
                     spec_score += 1
 
-            specializations_data += [ self.make_response(spec_data,spec_score)]
+            specializations_data += [ self.make_response(spec_data,spec_score,student_score)]
         specializations_data.sort(key=lambda x: (-x['universityRank'],x['specProbability']),
                                   reverse = True)
         test_list = []
@@ -127,3 +145,37 @@ class RelevantSpecialization():
                      'universityName': 'test_uni','universityRank': 4})
 
         return { 'specializations' : test_list + specializations_data[:50] }
+
+class AutoCompleteData:
+
+    def get_file():
+        query = db.auto_complete.find({},{'_id':0})
+        return [i for i in query]
+
+    def get_cities_name():
+
+        query = db.info.distinct('cityName')
+        return [i for i in query]
+
+    def  get_uni_names(self):
+
+        query = db.info.distinct('universityName',{'cityName'      : self.city })
+        return [i for i in query]
+
+    def  get_facultaty_names(self):
+
+        query = db.info.distinct('facultatyName', {'cityName'        : self.city,
+                                                   'universityName'  : self.university })
+        return [i for i in query]
+
+    def  get_facultaty_names(self):
+
+        query = db.info.distinct('specialityName',{'cityName'       : self.city,
+                                                   'universityName' : self.university,
+                                                   'facultatyName'  : self.facultaty })
+        return [i for i in query]
+
+    def  get_fields_names(self):
+
+        query = db.info.distinct('specialityName',{'cityName':self.city })
+        return [i for i in query]
