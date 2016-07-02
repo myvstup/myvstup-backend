@@ -36,24 +36,22 @@ class RelevantSpecialization():
                 self.dropdowns.update({ prop : str(data[prop])})
                 
     def query_data(self):
-
         q = [ 
                 { "$project": { 
-                        "possible_combinations": { 
-                                "$setDifference": [
+                        "possible_combinations":
+                            {'$setDifference': [
                                     { "$map": { 
                                         "input": "$possible_combinations",
                                         "as": "k",
                                         "in": { 
                                             "$cond": [ 
-                                                { "$setIsSubset": [ "$$k", list( self.student_points['points'].keys()) ] },
-                                                "$$k",
-                                                False 
+                                                { "$setIsSubset": [ "$$k", list( self.student_points['points'].keys())] },
+                                                "True",
+                                                "False"
                                             ] 
                                         } 
                                     }},
-                                    [False]
-                                ]},
+                                    ["False"]]},
                         "cityName"       : 1,
                         "universityName" : 1,
                         "facultatyName"  : 1,
@@ -62,47 +60,37 @@ class RelevantSpecialization():
                         "point_mid_median":1,
                         "point_median"   : 1,
                         "zno_coefs"      : 1,
-                        "link"           : 1
-                                }
-              },
+                        "link"           : 1,
+                        "isFreePlaces"   : 1,
+                        "fach_tvorch_coefs":1
+                                }},
               {"$match" : 
-                     {'possible_combinations' : 
-                                {'$not' : 
-                                    {'$size' : 0 }
-                                }
+                     { 'possible_combinations': {'$not': {'$size':0}},
+                       'isFreePlaces':True
                       },
                }
             ]
+
         q[1]['$match'].update(self.dropdowns)
-#        self.query = {'isFreePlaces':True}
+
         return [i for i in db.info.aggregate(q)]
 
     def make_response(self,spec_data,score,student_score):
         try : rank = self.uni_rank[spec_data['universityName']]
         except KeyError : rank = 101
-        return { 'cityName'        : spec_data['cityName'],
-                 'universityName'  : spec_data['universityName'],
-                 'facultatyName'   : spec_data['facultatyName'],
-                 'specialityName'  : spec_data['specialityName'],
-                 'url'             : spec_data['link'],
-                 'specProbability' : score,
-                 'universityRank'  : int(rank),
-                 'test'            : self.test_counting(student_score,spec_data)}
+        responce_dict = { 'cityName'        : spec_data['cityName'],
+                          'universityName'  : spec_data['universityName'],
+                          'facultatyName'   : spec_data['facultatyName'],
+                          'specialityName'  : spec_data['specialityName'],
+                          'url'             : spec_data['link'],
+                          'specProbability' : score,
+                          'universityRank'  : int(rank)}
+                          
+        if len(spec_data['fach_tvorch_coefs'])!=0:
+            responce_dict.update({'examNumber'      : len(spec_data['fach_tvorch_coefs']),
+                                  'examScore'       : np.mean(list(spec_data['fach_tvorch_coefs'].values())) })
 
-    def test_counting(self,student_score,spec_data):
-        student_score = 0; sum_points = 0;used_zno_coefs = {}
-        for zno_name in list(self.student_points['points'].keys()):
-            try: 
-                student_score += spec_data['zno_coefs'][zno_name] * self.student_points['points'][zno_name]
-                sum_points += spec_data['zno_coefs'][zno_name]
-                used_zno_coefs.update({zno_name:spec_data['zno_coefs'][zno_name]})
-            except KeyError :pass
-        student_score += self.certificateScore*(1 - sum_points)
-        student_score += self.hasTrainingPoints * 10 + self.hasOlimpicPoints * 10
-
-        return {'student_score'  : student_score,
-                'used_zno'       : self.student_points['points'],
-                'used_zno_coefs' : used_zno_coefs }
+        return responce_dict
 
     def count_proba(self):
 
@@ -143,13 +131,16 @@ class RelevantSpecialization():
                      'universityName': 'Дубна','universityRank': 3})
         test_list.append({'cityName': 'КПИ','facultatyName': 'test_fac','specProbability': 2,'specialityName': 'test_spec',
                      'universityName': 'test_uni','universityRank': 4})
-
+        if len(specializations_data)==0:
+            error = 'Введених ЗНО недостатньо.'
+            return {'specializations': [],
+                    'errorMessage' : error }
         return { 'specializations' : test_list + specializations_data[:50] }
 
 class AutoCompleteData:
 
     def get_file():
-        query = db.auto_complete.find({},{'_id':0})
+        query = db.auto_complete.find({ 'name' : { '$nin' : ['Донецька область','Луганська область'] }},{'_id':0})
         return [i for i in query]
 
     def get_cities_name():
