@@ -25,8 +25,8 @@ def proba_spec():
 @app.route('/api/v0/auto_complete_data', methods=['GET'])
 def auto_complete_data():
 
-    response = models.AutoCompleteData.get_file()
-
+    response = models.AutoCompleteData().get_file()
+    response = models.AutoCompleteData().alpha_sorting(response)
     return response, 200
 
 @app.errorhandler(404)

@@ -5,6 +5,11 @@ import json
 from bson.objectid import ObjectId
 from operator import itemgetter as itmgtr
 from functools import cmp_to_key
+from collections import OrderedDict
+
+_ALPHABET = ['а','б','в','г','ґ','д','е','є','ж','з','и','і','ї',
+             'й','к','л','м','н','о','п','р','с','т','у','ф','х',
+             'ц','ч','ш','щ','ь','ю','я']
 
 class Tools:
 
@@ -120,26 +125,25 @@ class RelevantSpecialization():
                     spec_score += 1
 
             specializations_data += [ self.make_response(spec_data,spec_score,student_score)]
-        specializations_data.sort(key=lambda x: (-x['universityRank'],x['specProbability']),
+        specializations_data.sort(key=lambda x: (x['specProbability'],-x['universityRank']),
                                   reverse = True)
-        test_list = []
-        test_list.append({'cityName': 'Cambridge','facultatyName': ' Harvard Business School','specProbability': -1,'specialityName': 'The Entrepreneurial Management',
-                     'universityName': 'HARWARD','universityRank': 1, 'url': 'http://www.hbs.edu/faculty/units/em/Pages/default.aspx'})
-        test_list.append({'cityName': 'Стокгольм','facultatyName': 'test_fac','specProbability': 0,'specialityName': 'test_spec',
-                     'universityName': 'KTH','universityRank': 2})
-        test_list.append({'cityName': 'Дубна','facultatyName': 'ФизТех','specProbability': 1,'specialityName': 'теоретическая физика',
-                     'universityName': 'Дубна','universityRank': 3})
-        test_list.append({'cityName': 'КПИ','facultatyName': 'test_fac','specProbability': 2,'specialityName': 'test_spec',
-                     'universityName': 'test_uni','universityRank': 4})
+
         if len(specializations_data)==0:
             error = 'Введених ЗНО недостатньо.'
             return {'specializations': [],
                     'errorMessage' : error }
-        return { 'specializations' : test_list + specializations_data[:50] }
+        return { 'specializations' : specializations_data[:100] }
 
-class AutoCompleteData:
+class AutoCompleteData():
 
-    def get_file():
+    def __init__(self):
+        self.arange = dict(zip(_ALPHABET,range(1,len(_ALPHABET)+1)))
+
+    def alpha_sorting(self,data):
+        data = OrderedDict(sorted(data.items(), key=lambda i:self.arange.get(i[0].lower())))
+        return data
+
+    def get_file(self):
         query = db.auto_complete.find({ 'name' : { '$nin' : ['Донецька область','Луганська область'] }},{'_id':0})
         return [i for i in query]
 
