@@ -140,37 +140,9 @@ class AutoCompleteData():
         self.arange = dict(zip(_ALPHABET,range(1,len(_ALPHABET)+1)))
 
     def alpha_sorting(self,data):
-        data = OrderedDict(sorted(data.items(), key=lambda i:self.arange.get(i[0].lower())))
+        data = sorted(data, key=lambda i:self.arange.get(i['name'][0].lower()))
         return data
 
     def get_file(self):
         query = db.auto_complete.find({ 'name' : { '$nin' : ['Донецька область','Луганська область'] }},{'_id':0})
-        return [i for i in query]
-
-    def get_cities_name():
-
-        query = db.info.distinct('cityName')
-        return [i for i in query]
-
-    def  get_uni_names(self):
-
-        query = db.info.distinct('universityName',{'cityName'      : self.city })
-        return [i for i in query]
-
-    def  get_facultaty_names(self):
-
-        query = db.info.distinct('facultatyName', {'cityName'        : self.city,
-                                                   'universityName'  : self.university })
-        return [i for i in query]
-
-    def  get_facultaty_names(self):
-
-        query = db.info.distinct('specialityName',{'cityName'       : self.city,
-                                                   'universityName' : self.university,
-                                                   'facultatyName'  : self.facultaty })
-        return [i for i in query]
-
-    def  get_fields_names(self):
-
-        query = db.info.distinct('specialityName',{'cityName':self.city })
         return [i for i in query]
