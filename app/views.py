@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from app import app
 from app import models
-
+import time
 from flask import abort, request
 import json
 
@@ -27,6 +27,7 @@ def auto_complete_data():
 
     response = models.AutoCompleteData().get_file()
     response = models.AutoCompleteData().alpha_sorting(response)
+
     return response, 200
 
 @app.errorhandler(404)

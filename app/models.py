@@ -144,5 +144,5 @@ class AutoCompleteData():
         return data
 
     def get_file(self):
-        query = db.auto_complete.find({ 'name' : { '$nin' : ['Донецька область','Луганська область'] }},{'_id':0})
-        return [i for i in query]
+        query = db.auto_complete.find({},{'_id':0})
+        return [i for i in query if i['name'] not in ['Донецька область','Луганська область']]
