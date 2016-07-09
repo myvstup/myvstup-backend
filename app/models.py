@@ -4,8 +4,8 @@ import numpy as np
 import json
 from bson.objectid import ObjectId
 from operator import itemgetter as itmgtr
-from functools import cmp_to_key
 from collections import OrderedDict
+from functools import wraps
 
 _ALPHABET = ['а','б','в','г','ґ','д','е','є','ж','з','и','і','ї',
              'й','к','л','м','н','о','п','р','с','т','у','ф','х',
@@ -81,8 +81,10 @@ class RelevantSpecialization():
         return [i for i in db.info.aggregate(q)]
 
     def make_response(self,spec_data,score,student_score):
+
         try : rank = self.uni_rank[spec_data['universityName']]
         except KeyError : rank = 101
+        
         responce_dict = { 'cityName'        : spec_data['cityName'],
                           'universityName'  : spec_data['universityName'],
                           'facultatyName'   : spec_data['facultatyName'],

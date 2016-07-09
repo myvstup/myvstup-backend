@@ -5,28 +5,26 @@ import time
 from flask import abort, request
 import json
 
-@app.route('/api/v0/points', methods=['POST','GET'])
-def add_request():
-
-    if request.method == 'GET':
-        return {'status':'get_ok'}
-
-    if request.method == 'POST':
-        data = {'userId': str(models.Tools.add_points(request.data))	}
-        return data, 201
-
 @app.route('/api/v0/get_proba', methods=['POST'])
 def proba_spec():
 
-    response = models.RelevantSpecialization(request.data).count_proba()
+    if request.method == 'POST':
+
+        try: request.data['certificateScore']
+        except KeyError:
+            msg = "payload must be a valid json"
+            return jsonify({"error": msg}), 400
+
+        response = models.RelevantSpecialization(request.data).count_proba()
 
     return response, 200
 
 @app.route('/api/v0/auto_complete_data', methods=['GET'])
 def auto_complete_data():
 
-    response = models.AutoCompleteData().get_file()
-    response = models.AutoCompleteData().alpha_sorting(response)
+    if request.method == 'GET':
+        response = models.AutoCompleteData().get_file()
+        response = models.AutoCompleteData().alpha_sorting(response)
 
     return response, 200
 
