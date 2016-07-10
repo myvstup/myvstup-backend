@@ -15,9 +15,9 @@ class Tools:
 
     def get_student_points(data):
         student_points = {}
-        for key in list(data['subjects'].keys()):
-            if "score" in list(data['subjects'][key].keys()):
-                student_points[key] = data['subjects'][key]['score']
+        for zno_name in list(data['subjects'].keys()):
+            if data['subjects'][zno_name]['isTested'] == True:
+                student_points[zno_name] = data['subjects'][zno_name]['score']
 
         return {'points' :  student_points}
 
